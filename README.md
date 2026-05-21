@@ -1,102 +1,57 @@
-# Fleet Management API
+# AI-Powered Task Management API
 
-A production-ready REST API for vehicle onboarding and subscription-based feature management, built with Spring Boot.
-
-Inspired by real-world automotive IoT systems, this service manages vehicle registration, subscription packages, and feature access control (ADAS, Geofence, OTA updates).
-
-## Features
-
-- Vehicle onboarding and management
-- Subscription-based feature access (Basic / Standard / Premium)
-- JWT authentication and authorization
-- Firmware version tracking and OTA update status
-- Global exception handling with meaningful error responses
-- API documentation via Swagger UI
-- Containerized with Docker
+A task management system with an AI agent that understands natural language commands.
 
 ## Tech Stack
 
-- Java 17
-- Spring Boot 3.2
-- Spring Security + JWT
+**Backend (Spring Boot)**
+- Java 17, Spring Boot 3
+- Spring Security + JWT Authentication
 - PostgreSQL
 - Docker
-- Maven
+- Swagger UI
 
-## Architecture
+**AI Service (Python)**
+- LangChain + LangGraph
+- OpenAI GPT-4o-mini
+- ChromaDB (RAG/Semantic Search)
 
-```
-Client → JWT Filter → Controller → Service → Repository → PostgreSQL
-```
+## Features
+
+- JWT-based authentication
+- Full task CRUD via REST API
+- Natural language task management via AI agent
+- Semantic search over tasks using RAG + ChromaDB
+
+## How It Works
+User: "Create a task to review the Q3 report, high priority, due June 15"
+↓
+LangChain Agent reads intent
+↓
+Calls create_task() tool
+↓
+Spring Boot saves to PostgreSQL
+↓
+AI replies: "Done! Task created with HIGH priority, due June 15"
 
 ## API Endpoints
 
-### Auth
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | /api/auth/register | Register a new user |
-| POST | /api/auth/login | Login and get JWT token |
+| POST | /api/auth/register | Register user |
+| POST | /api/auth/login | Login, get JWT |
+| POST | /api/tasks | Create task |
+| GET | /api/tasks | Get all tasks |
+| GET | /api/tasks/{id} | Get task by ID |
+| PUT | /api/tasks/{id} | Update task |
+| DELETE | /api/tasks/{id} | Delete task |
 
-### Vehicles
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/vehicles/onboard | Onboard a new vehicle |
-| GET | /api/vehicles/{deviceId} | Get vehicle details |
-| PUT | /api/vehicles/{deviceId}/firmware | Update firmware version |
-| POST | /api/vehicles/{deviceId}/subscription | Assign subscription package |
-| GET | /api/vehicles/{deviceId}/features | Get available features |
-
-## Getting Started
-
-### Prerequisites
-- Java 17
-- PostgreSQL
-- Maven
-
-### Run Locally
+## Setup
 
 1. Clone the repo
-```bash
-git clone https://github.com/edwinmjose98/fleet-management-api.git
-cd fleet-management-api
-```
+2. Copy `application-example.properties` to `application.properties` and fill in your DB credentials
+3. Run `./mvnw spring-boot:run`
 
-2. Create database
-```sql
-CREATE DATABASE taskmanager;
-CREATE USER taskuser WITH PASSWORD 'taskpass';
-GRANT ALL PRIVILEGES ON DATABASE taskmanager TO taskuser;
-```
+## AI Service Setup
 
-3. Run the app
-```bash
-./mvnw spring-boot:run
-```
-
-4. Access Swagger UI
-```
-http://localhost:8081/swagger-ui/index.html
-```
-
-### Run with Docker
-```bash
-docker build -t fleet-management-api .
-docker run -p 8081:8081 \
-  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/taskmanager \
-  -e SPRING_DATASOURCE_USERNAME=taskuser \
-  -e SPRING_DATASOURCE_PASSWORD=taskpass \
-  fleet-management-api
-```
-
-## Subscription Packages
-
-| Package | Features |
-|---------|----------|
-| Basic | Geofence |
-| Standard | Geofence, ADAS |
-| Premium | Geofence, ADAS, OTA Update, Remote Lock, Remote Start, Diagnostics |
-
-## Testing
-```bash
-./mvnw test
-```
+See [task-ai-service](https://github.com/edwinmjose98/task-ai-service) for the Python AI agent.
